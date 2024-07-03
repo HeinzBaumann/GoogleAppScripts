@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <style>
+      .custom-select {
+        position: relative;
+        width: 30%;
+        border: 1px solid #d3d3d3;
+         padding: 5px;
+        font-family: Arial;
+      }
+
+      .custom-select select {
+        display: none; /* hide original SELECT element: */
+      }
+
+      .select-selected {
+        background-color: DodgerBlue;
+      }
+
+      /* Style the arrow inside the select element: */
+      .select-selected:after {
+        position: absolute;
+        content: "";
+        top: 14px;
+        right: 10px;
+        width: 0;
+        height: 0;
+        border: 6px solid transparent;
+        border-color: #fff transparent transparent transparent;
+      }
+      /* style the items (options), including the selected item: */
+.     select-items div,.select-selected {
+        color: #ffffff;
+        padding: 8px 16px;
+        border: 1px solid transparent;
+        border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;
+        cursor: pointer;
+      }
+
+      /* Style items (options): */
+      .select-items {
+        position: absolute;
+        background-color: DodgerBlue;
+        top: 100%;
+        left: 0;
+        right: 0;
+        z-index: 99;
+      }
+      .f1 {
+        font-family: Arial, Arial, sans-serif;
+        font-size: 14px;
+        padding-top: 10px;
+        padding-left: 8px
+        color: xc8c8c8;
+      }
+      .f2 {
+        font-family: Arial, Arial, sans-serif;
+        font-size: 14px;
+        // padding-left: 8px;
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <form>
+      <select class="custom-select" id="items">
+        <!-- items will be filled in here -->
+      </select>
+      <br><br>
+      <input type=button onclick="submitSelection()" value="Submit">
+      <div> </div>
+      <div id="output1" class=f1></div>
+      <div id="output2" class=f2></div>
+    </form>
+    <script>
+      function populateItems(items) {
+        var select = document.getElementById('items');
+        items.forEach(function(item) {
+          var option = document.createElement('option');
+          option.value = item;
+          option.text = item;
+          select.add(option);
+        });
+        displayMsg("");
+      }
+
+      function displayMsg(str) {
+        var div = document.getElementById('output1');
+        div.innerHTML = str;
+      }
+
+      function displayError(str) {
+        var div = document.getElementById('output2');
+        div.innerHTML = str;
+      }
+
+      function onFailure(error) {
+        displayError("ERROR: " + error.message);
+      }
+
+      function submitSelection() {
+        const select = document.getElementById('items');
+        const selection = select.options[select.selectedIndex].value;
+        google.script.run.withFailureHandler(onFailure).onSelectedItem(selection);
+        google.script.host.close();
+      }
+
+      displayMsg("Loading data...");
+      google.script.run.withSuccessHandler(populateItems).withFailureHandler(onFailure).getLanguages();
+
+    </script>
+  </body>
+</html>
